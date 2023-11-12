@@ -84,7 +84,7 @@ def get_route_points_and_avg_speed(start, dest):
     return path_points, avg_speed
 
 @app.route('/path', methods=['GET'])
-def get_stops():
+def get_path():
     data, x= get_route_points_and_avg_speed(TRIP['start'], TRIP['dest'])
     return jsonify({'data': data})
 
