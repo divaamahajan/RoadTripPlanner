@@ -19,7 +19,7 @@ CORS(app)
 TRIP = {
     'start' : '37.770581,-122.442550',
     'dest' : '37.765297,-122.442527',
-    'stopAfter' : 15  # in mins
+    'stopAfter' : 1  # in mins
 }
 
 
@@ -34,22 +34,22 @@ def set_trip():
         data = request.get_json()
 
         # Validate the input
-        if 'start' not in data or 'dest' not in data or 'stopAfter' not in data:
-            return jsonify({'error': 'Invalid input. Please provide start, dest, and stopAfter'}), 400
+        #if 'start' not in data or 'dest' not in data or 'stopAfter' not in data:
+        #    return jsonify({'error': 'Invalid input. Please provide start, dest, and stopAfter'}), 400
 
         start = data['start']
         dest = data['dest']
         stopAfter = data['stopAfter']
 
         # Validate the coordinates
-        if len(start) != 2 or len(dest) != 2:
-            return jsonify({'error': 'Invalid coordinates. Please provide lat and long for start and dest'}), 400
+        #if len(start) != 2 or len(dest) != 2:
+        #    return jsonify({'error': 'Invalid coordinates. Please provide lat and long for start and dest'}), 400
 
         # Create a route dictionary
         global TRIP
         TRIP = {
-            'start': {'lat': start[0], 'long': start[1]},
-            'dest': {'lat': dest[0], 'long': dest[1]},
+            'start' : {'lat': start[0], 'long': start[1]},
+            'dest' : {'lat': dest[0], 'long': dest[1]},
             'stopAfter': stopAfter
         }
         
@@ -58,6 +58,7 @@ def set_trip():
         return jsonify({'message': TRIP }), 201
 
     except Exception as e:
+        print("error : " + str(e))
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/test', methods=['GET'])
@@ -73,19 +74,19 @@ def refresh_tok():
     inrix_token = rjson['result']['token']
 
 
-def get_route_points_and_avg_speed(start, dest):
+def get_route_stat(start, dest):
     refresh_tok()
     #testing findRoute and getRoute
     response = requests.get(PROXY_SERVER+"/getroute",headers={'Authorization': inrix_token, 'start' : start, 'dest' : dest})
     path_points = response.json()["result"]["trip"]["routes"][0]["points"]["coordinates"]
     avg_speed = response.json()["result"]["trip"]["routes"][0]["averageSpeed"]
-    print(path_points)
-    print(avg_speed)
-    return path_points, avg_speed
+    total_dist = response.json()["result"]["trip"]["routes"][0]["totalDistance"]
+
+    return path_points, avg_speed, total_dist
 
 @app.route('/api/path', methods=['GET'])
 def get_path():
-    data, x= get_route_points_and_avg_speed(TRIP['start'], TRIP['dest'])
+    data, x= get_route_stat(TRIP['start'], TRIP['dest'])
     return jsonify({'data': data})
 
 @app.route('/api/stops', methods=['GET'])
@@ -146,7 +147,7 @@ def get_stops():
 
 @app.route('/api/stop_points', methods=['GET'])
 def get_stops_new():
-    path_array, avg_speed= get_route_points_and_avg_speed(TRIP['start'], TRIP['dest'])
+    path_array, avg_speed= get_route_stat(TRIP['start'], TRIP['dest'])
     stop_time = TRIP['stopAfter']
     stop_dist = avg_speed * stop_time
     
@@ -155,6 +156,8 @@ def get_stops_new():
     stop_point_array = []
     for point in path_array[1:]:
         curr_dist = distance(point[0], point[1], start[0], start[1])
+        print(curr_dist)
+        print(point)
         if curr_dist == stop_dist : 
             stop_point_array.append(point)
             start = point
@@ -163,6 +166,8 @@ def get_stops_new():
             start = prev
         else :
             prev = point
+        
+    print(stop_point_array)
     
     return jsonify({'data': stop_point_array})
             
