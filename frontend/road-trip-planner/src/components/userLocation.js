@@ -13,6 +13,7 @@ const UserLocation = () => {
   const [destination, setDestination] = useState("");
   const [stopAfterMinutes, setStopAfterMinutes] = useState("");
   const [resultObject, setResultObject] = useState({});
+  const [formSubmitted, setFormSubmitted] = useState(false);
 
   const handleSubmit = async () => {
     let startLat, startLon, destLat, destLon; // Declare variables here
@@ -53,6 +54,7 @@ const UserLocation = () => {
         };
 
         console.log("Result Object:", resultObject);
+        setFormSubmitted(true);
 
         // Post the result object to the specified URL
         const apiUrl = "http://54.237.215.115:5000/input";
@@ -100,7 +102,7 @@ const UserLocation = () => {
         handleSubmit={handleSubmit}
       />
       {/* <ResultDisplay resultObject={resultObject} /> */}
-      <StopLocationTable stopLocations={stopLocation.data} />
+      {formSubmitted && <StopLocationTable stopLocations={stopLocation.data} />}
     </div>
   );
 };
