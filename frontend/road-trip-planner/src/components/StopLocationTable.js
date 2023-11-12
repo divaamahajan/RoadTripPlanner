@@ -1,6 +1,18 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUtensils, faGasPump } from "@fortawesome/free-solid-svg-icons";
+import {
+  Box,
+  Button,
+  ButtonGroup,
+  Flex,
+  HStack,
+  IconButton,
+  Input,
+  Skeleton,
+  SkeletonText,
+  Text,
+} from "@chakra-ui/react";
 
 const getIcon = (type) => {
   switch (type) {
@@ -48,17 +60,20 @@ const StopLocationTable = ({ stopLocations, onAddStops, stopAfterMinutes }) => {
   return (
     <div>
       {/* Add Stops button */}
-      <button onClick={handleAddStops}
-        colorScheme="orange" // Change color scheme to orange
+      <Button
+        onClick={handleAddStops}
+        colorScheme="orange"
         bgColor="#D94E28"
-        _hover={{ bgColor: '#867e7c' }} // Change hover color
-        color="white" // Set text color to white
-        boxShadow="0 2px 4px rgba(0, 0, 0, 0.1)" // Add a button shadow
-        textAlign="center" // Center the text within the button
-        padding="8px 16px" // Add padding from the button border
-        borderRadius="md">
+        _hover={{ bgColor: '#867e7c' }}
+        color="white"
+        boxShadow="0 2px 4px rgba(0, 0, 0, 0.1)"
+        textAlign="center"
+        padding="6px 12px" // Adjust padding to make it smaller
+        borderRadius="md"
+        fontSize="14px" // Adjust font size to make it smaller
+      >
         Add Stops
-      </button>
+      </Button>
       <div style={{ maxHeight: "300px", overflowY: "auto" }}>
         {stopLocations.map((stop, index) => (
           <div key={stop.stop_id}>
