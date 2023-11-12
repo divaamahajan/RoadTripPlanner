@@ -1,4 +1,8 @@
 "use client";
+import { Paper, Typography, useMediaQuery } from '@material-ui/core';
+import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined';
+import Rating from '@material-ui/lab/Rating';
+import useStyles from './styles';
 import {
   Box,
   Button,
@@ -20,12 +24,14 @@ import {
   Marker,
   Autocomplete,
   DirectionsRenderer,
+  InfoWindow
 } from "@react-google-maps/api";
 import { useState, useRef } from "react";
 
 const center = { lat: 37.778828144073486, lng: -122.40001201629639 };
 
 function Map() {
+  const classes = useStyles();
   const [map, setMap] = useState(/**@type google.maps.Map*/(null));
   const [directionsResponse, setDirectionsResponse] = useState(null);
   const [distance, setDistance] = useState("");
@@ -41,7 +47,17 @@ function Map() {
 
   // Function to handle selected rows from StopLocationTable
   const handleAddStops = (rows) => {
-    setSelectedRows(rows);
+    // Modify location format for each row
+    const modifiedRows = rows.map((row) => {
+      const [lat, lng] = row.location;
+      return {
+        ...row,
+        location: { lat, lng },
+      };
+    });
+
+    console.log(modifiedRows);
+    setSelectedRows(modifiedRows);
     console.log(selectedRows);
   };
 
@@ -110,7 +126,10 @@ function Map() {
       // eslint-disable-next-line no-undef
       travelMode: google.maps.TravelMode.DRIVING,
     });
-    console.log("results-main", results.geocoded_waypoints.map((i) => i.place_id));
+    console.log(
+      "results-main",
+      results.geocoded_waypoints.map((i) => i.place_id)
+    );
 
     const geocoder = new google.maps.Geocoder();
     const placeId = results.geocoded_waypoints.map((i) => i.place_id);
@@ -118,36 +137,42 @@ function Map() {
 
     let start = [];
     function SgeocodePlaceId() {
-      geocoder.geocode({ placeId: String(placeId[0]) }).then(({ results }) => {
-        if (results[0]) {
-          const location = results[0].geometry.location;
-          console.log('SLatitude: ' + location.lat());
-          console.log('SLongitude: ' + location.lng());
-          setStartLocation([location.lat(), location.lng()])
-          console.log(setStartLocation);
-          start = [Number(location.lat()), Number(location.lng())];
-        } else {
-          console.log("No results found");
-        }
-      }).catch((e) => console.log("Geocoder failed due to: " + e));
+      geocoder
+        .geocode({ placeId: String(placeId[0]) })
+        .then(({ results }) => {
+          if (results[0]) {
+            const location = results[0].geometry.location;
+            console.log("SLatitude: " + location.lat());
+            console.log("SLongitude: " + location.lng());
+            setStartLocation([location.lat(), location.lng()]);
+            console.log(setStartLocation);
+            start = [Number(location.lat()), Number(location.lng())];
+          } else {
+            console.log("No results found");
+          }
+        })
+        .catch((e) => console.log("Geocoder failed due to: " + e));
     }
 
     let dest = [];
     function DgeocodePlaceId() {
-      geocoder.geocode({ placeId: String(placeId[1]) }).then(({ results }) => {
-        if (results[0]) {
-          const location = results[0].geometry.location;
-          console.log('DLatitude: ' + location.lat());
-          console.log('DLongitude: ' + location.lng());
-          setDestination([location.lat(), location.lng()])
-          dest = [Number(location.lat()), Number(location.lng())];
-          console.log("dest", dest)
-          console.log(setDestination);
-          return dest;
-        } else {
-          console.log("No results found");
-        }
-      }).catch((e) => console.log("Geocoder failed due to: " + e));
+      geocoder
+        .geocode({ placeId: String(placeId[1]) })
+        .then(({ results }) => {
+          if (results[0]) {
+            const location = results[0].geometry.location;
+            console.log("DLatitude: " + location.lat());
+            console.log("DLongitude: " + location.lng());
+            setDestination([location.lat(), location.lng()]);
+            dest = [Number(location.lat()), Number(location.lng())];
+            console.log("dest", dest);
+            console.log(setDestination);
+            return dest;
+          } else {
+            console.log("No results found");
+          }
+        })
+        .catch((e) => console.log("Geocoder failed due to: " + e));
     }
 
     start = SgeocodePlaceId();
@@ -159,9 +184,6 @@ function Map() {
     setDirectionsResponse(results);
     setDistance(results.routes[0].legs[0].distance.text);
     setDuration(results.routes[0].legs[0].duration.text);
-
-
-
 
     try {
       const resultObject = await calculateCoordinates();
@@ -223,11 +245,30 @@ function Map() {
           }}
           onLoad={(map) => setMap(map)}
         >
+          {selectedRows.map((stop) => (
+            // <Marker
+            //   position={stop.location} 
+            // />
 
-    
+            <InfoWindow position={stop.location} style={{ width: '10px' }}>
+              <div style={{ textAlign: 'center', padding: '5px', color: 'black' }}>
+                <h2 style={{ fontWeight: 'bold', fontSize: '1.2rem', marginBottom: '4px' }}>
+                  {stop.Name}
+                </h2>
+                <p style={{ fontSize: '0.8rem', marginBottom: '4px' }}>{stop.address}</p>
+                <h3 style={{ fontWeight: 'bold', fontSize: '1rem', marginBottom: '4px' }}>
+                  Parking Available
+                </h3>
+                {stop.parkingNames.map((parkingName, index) => (
+                  <p key={index} style={{ fontSize: '0.8rem', marginBottom: '2px' }}>
+                    {parkingName}
+                  </p>
+                ))}
+              </div>
+            </InfoWindow>
 
 
-          <Marker position={center} />
+          ))}
           {directionsResponse && (
             <DirectionsRenderer directions={directionsResponse} />
           )}
@@ -238,11 +279,13 @@ function Map() {
         p={4}
         borderRadius="lg"
         mt={4}
-        bgColor="black"
+        bgColor="white" // Set background color to white
         shadow="base"
         minW="container.md"
         zIndex="11111111111"
-        textColor="red"
+        textColor="#867e7c"
+        boxShadow="0 4px 8px rgba(0, 0, 0, 0.1)"
+        border="2px solid grey"// Set text color to your preferred color
       >
         <HStack spacing={4}>
           <Autocomplete>
@@ -252,6 +295,9 @@ function Map() {
               // value={startLocation}
               // onChange={(e) => setStartLocation(e.target.value)}
               ref={originRef}
+              border="1px solid #D94E28" // Add a border to the input field
+              borderRadius="md"
+              p={2}
             />
           </Autocomplete>
           <Autocomplete>
@@ -261,6 +307,9 @@ function Map() {
               // value={destination}
               // onChange={(e) => setDestination(e.target.value)}
               ref={destinationRef}
+              border="1px solid #D94E28" // Add a border to the input field
+              borderRadius="md"
+              p={2}
             />
           </Autocomplete>
           <Input
@@ -268,10 +317,26 @@ function Map() {
             value={stopAfterMinutes}
             placeholder="stop after (mins)"
             onChange={(e) => setStopAfterMinutes(e.target.value)}
+            border="1px solid #D94E28" // Add a border to the input field
+            borderRadius="md"
+            p={2}
           />
 
           <ButtonGroup>
-            <Button colorScheme="pink" type="submit" onClick={calculateRoute}>
+
+            <Button
+              colorScheme="orange" // Change color scheme to orange
+              type="submit"
+              onClick={calculateRoute}
+              bgColor="#D94E28"
+              _hover={{ bgColor: '#867e7c' }} // Change hover color
+              color="white" // Set text color to white
+              boxShadow="0 2px 4px rgba(0, 0, 0, 0.1)" // Add a button shadow
+              textAlign="center" // Center the text within the button
+              padding="8px 16px" // Add padding from the button border
+              borderRadius="md" // Add border radius
+            >
+              {/* <Button colorScheme="orange" type="submit" onClick={calculateRoute} bgColor="#D94E28"> Use #D94E28 for button color */}
               Calculate Route
             </Button>
             <IconButton
@@ -291,9 +356,14 @@ function Map() {
             onClick={() => map.panTo(center)}
           />
         </HStack>
-        <StopLocationTable stopLocations={stopLocation.data} onAddStops={handleAddStops} />
+        <StopLocationTable
+          stopLocations={stopLocation.data}
+          onAddStops={handleAddStops}
+          stopAfterMinutes={stopAfterMinutes}
+        />
+
       </Box>
-    </Flex>
+    </Flex >
   );
 }
 
