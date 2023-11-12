@@ -17,8 +17,8 @@ CORS(app)
 
 
 TRIP = {
-    'start' : '37.770581,-122.442550',
-    'dest' : '37.765297,-122.442527',
+    'start' : [37.770581,-122.442550],
+    'dest' : [37.765297,-122.442527],
     'stopAfter' : 1  # in mins
 }
 
@@ -41,6 +41,7 @@ def set_trip():
         dest = data['dest']
         stopAfter = data['stopAfter']
 
+        print(data)
         # Validate the coordinates
         #if len(start) != 2 or len(dest) != 2:
         #    return jsonify({'error': 'Invalid coordinates. Please provide lat and long for start and dest'}), 400
@@ -74,18 +75,28 @@ def refresh_tok():
     inrix_token = rjson['result']['token']
 
 
+def get_str_from_co(point):
+    return str(point[0]) + ", " + str(point[1])
+
 def get_route_stat(start, dest):
     refresh_tok()
+    print(start, dest)
     #testing findRoute and getRoute
-    response = requests.get(PROXY_SERVER+"/getroute",headers={'Authorization': inrix_token, 'start' : start, 'dest' : dest})
+    st = get_str_from_co(start)
+    end = get_str_from_co(dest)
+    print ({'Authorization': 'inrix_token', 'start' : st, 'dest' : end})
+    response = requests.get(PROXY_SERVER+"/getroute",headers={'Authorization': inrix_token, 'start' : st, 'dest' : end})
+    print(response)
+    print(response.json())
     path_points = response.json()["result"]["trip"]["routes"][0]["points"]["coordinates"]
     avg_speed = response.json()["result"]["trip"]["routes"][0]["averageSpeed"]
     total_dist = response.json()["result"]["trip"]["routes"][0]["totalDistance"]
 
-    return path_points, avg_speed, total_dist
+    return path_points, float(avg_speed), float(total_dist)
 
 @app.route('/api/path', methods=['GET'])
 def get_path():
+    global TRIP
     data, x= get_route_stat(TRIP['start'], TRIP['dest'])
     return jsonify({'data': data})
 
@@ -100,7 +111,8 @@ def get_stops():
       "name": "Chipotle",
       "parkCount": 3,
       "addedTime": 7,
-      "location": [40.7128, -74.006]
+      "location": [40.7128, -74.006],
+      "address" : "new address"
     },
     {
       "id": 124,
@@ -108,7 +120,8 @@ def get_stops():
       "name": "Starbucks",
       "parkCount": 2,
       "addedTime": 5,
-      "location": [34.0522, -118.2437]
+      "location": [34.0522, -118.2437],
+      "address" : "new address"
     },
     {
       "id": 125,
@@ -116,7 +129,8 @@ def get_stops():
       "name": "The Pub",
       "parkCount": 5,
       "addedTime": 10,
-      "location": [51.5074, -0.1278]
+      "location": [51.5074, -0.1278],
+      "address" : "new address"
     },
     {
       "id": 126,
@@ -124,7 +138,8 @@ def get_stops():
       "name": "McDonald's",
       "parkCount": 1,
       "addedTime": 3,
-      "location": [37.7749, -122.4194]
+      "location": [37.7749, -122.4194],
+      "address" : "new address"
     },
     {
       "id": 127,
@@ -132,7 +147,8 @@ def get_stops():
       "name": "Pizza Hut",
       "parkCount": 4,
       "addedTime": 8,
-      "location": [45.4215, -75.6993]
+      "location": [45.4215, -75.6993],
+      "address" : "new address"
     },
     {
       "id": 128,
@@ -140,32 +156,40 @@ def get_stops():
       "name": "Denny's",
       "parkCount": 2,
       "addedTime": 6,
-      "location": [40.7128, -74.006]
+      "location": [40.7128, -74.006],
+      "address" : "new address"
     }
   ]
 })
 
 @app.route('/api/stop_points', methods=['GET'])
 def get_stops_new():
-    path_array, avg_speed= get_route_stat(TRIP['start'], TRIP['dest'])
+    global TRIP
+    print(TRIP)
+    path_array, avg_speed, total_dist = get_route_stat(TRIP['start'], TRIP['dest'])
     stop_time = TRIP['stopAfter']
     stop_dist = avg_speed * stop_time
     
     prev = path_array[0]
     start = path_array[0]
     stop_point_array = []
-    for point in path_array[1:]:
-        curr_dist = distance(point[0], point[1], start[0], start[1])
-        print(curr_dist)
-        print(point)
-        if curr_dist == stop_dist : 
-            stop_point_array.append(point)
-            start = point
-        elif curr_dist > stop_dist:
-            stop_point_array.append(prev)
-            start = prev
-        else :
-            prev = point
+    print("stop_dist: ", stop_dist, "total :" , total_dist)
+    if stop_dist < total_dist:
+        for point in path_array[1:]:
+            curr_dist = distance(point[0], point[1], start[0], start[1])
+            print(curr_dist)
+            print(point)
+            if curr_dist == stop_dist : 
+                print("here 1", curr_dist, stop_dist)
+                stop_point_array.append(point)
+                start = point
+            elif curr_dist > stop_dist:
+                print("here 2", curr_dist, stop_dist)
+                stop_point_array.append(prev)
+                start = prev
+            else :
+                print("here 3", curr_dist, stop_dist)
+                prev = point
         
     print(stop_point_array)
     
@@ -176,7 +200,7 @@ def get_stops_new():
 
 
 if __name__ == '__main__':
-    get_route_points_and_avg_speed(TRIP['start'], TRIP['dest'])
+    get_route_stat(TRIP['start'], TRIP['dest'])
     app.run(host='0.0.0.0', port=5000, debug=True)
     
     

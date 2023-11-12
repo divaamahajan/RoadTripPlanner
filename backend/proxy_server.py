@@ -13,7 +13,7 @@ hash_token = ""
 @app.route('/gettoken', methods=['GET'])
 def get_token():
     # Set up URL to query
-    global inrix_token
+
     app_id = "eb8lmx7x2e"
     hash_token = "ZWI4bG14N3gyZXx5Q0dmQTZ6UjNoNlJONTI0eTlnNE4zclRYcFAzMmYwcThRSkpNSUFI"
     url = f"https://api.iq.inrix.com/auth/v1/appToken?appId={app_id}&hashToken={hash_token}"
