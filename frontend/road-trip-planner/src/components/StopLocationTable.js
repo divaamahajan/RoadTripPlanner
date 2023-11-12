@@ -23,10 +23,9 @@ const getIcon = (type) => {
       return null;
   }
 };
-
 const StopLocationTable = ({ stopLocations }) => {
   return (
-    <div>
+    <div style={{ maxHeight: "300px", overflowY: "auto" }}>
       <h2>Stop Locations</h2>
       <table style={{ width: "100%", borderCollapse: "collapse" }}>
         <thead>
@@ -45,7 +44,6 @@ const StopLocationTable = ({ stopLocations }) => {
                 {getIcon(location.type) && (
                   <FontAwesomeIcon icon={getIcon(location.type)} style={{ marginRight: "5px" }} />
                 )}
-                {/* {location.type} */}
               </td>
               <td>{location.name}</td>
               <td>{location.address}</td>
