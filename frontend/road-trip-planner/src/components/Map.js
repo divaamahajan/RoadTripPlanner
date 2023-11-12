@@ -216,7 +216,7 @@ function Map() {
           }}
           onLoad={(map) => setMap(map)}
         >
-          points.map(())
+          
           <Marker position={center} />
           {directionsResponse && (
             <DirectionsRenderer directions={directionsResponse} />
