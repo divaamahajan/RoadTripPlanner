@@ -103,6 +103,7 @@ const UserLocation = () => {
       />
       {/* <ResultDisplay resultObject={resultObject} /> */}
       {formSubmitted && <StopLocationTable stopLocations={stopLocation.data} />}
+      
     </div>
   );
 };
