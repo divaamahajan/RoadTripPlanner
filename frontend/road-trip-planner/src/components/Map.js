@@ -37,6 +37,13 @@ function Map() {
   const [stopLocation, setStopLocation] = useState({ data: [] });
   const [points, setPoints] = useState({});
   const [marker, setMarker] = useState({});
+  const [selectedRows, setSelectedRows] = useState([]);
+
+  // Function to handle selected rows from StopLocationTable
+  const handleAddStops = (rows) => {
+    setSelectedRows(rows);
+    console.log(selectedRows);
+  };
 
   const [resultObject, setResultObject] = useState({});
   /** @type React.MutableRefObject<HTMLInputElement> */
@@ -216,7 +223,14 @@ function Map() {
           }}
           onLoad={(map) => setMap(map)}
         >
-          
+
+          {selectedRows.map((stop) => (
+            <Marker
+              position={stop.stop_location}
+            />
+          ))}
+
+
           <Marker position={center} />
           {directionsResponse && (
             <DirectionsRenderer directions={directionsResponse} />
@@ -281,7 +295,7 @@ function Map() {
             onClick={() => map.panTo(center)}
           />
         </HStack>
-        <StopLocationTable stopLocations={stopLocation.data} />
+        <StopLocationTable stopLocations={stopLocation.data} onAddStops={handleAddStops} />
       </Box>
     </Flex>
   );

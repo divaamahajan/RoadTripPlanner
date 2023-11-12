@@ -28,6 +28,7 @@ const StopLocationTable = ({ stopLocations, onAddStops }) => {
   const handleAddStops = () => {
     // Send the list of selected rows back to the parent component
     onAddStops(selectedRows);
+    console.log("insidetable", selectedRows)
   };
 
   return (
