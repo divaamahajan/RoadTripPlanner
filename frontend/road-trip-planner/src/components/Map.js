@@ -1,4 +1,8 @@
 "use client";
+import { Paper, Typography, useMediaQuery } from '@material-ui/core';
+import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined';
+import Rating from '@material-ui/lab/Rating';
+import useStyles from './styles';
 import {
   Box,
   Button,
@@ -20,13 +24,15 @@ import {
   Marker,
   Autocomplete,
   DirectionsRenderer,
+  InfoWindow
 } from "@react-google-maps/api";
 import { useState, useRef } from "react";
 
 const center = { lat: 37.778828144073486, lng: -122.40001201629639 };
 
 function Map() {
-  const [map, setMap] = useState(/**@type google.maps.Map*/ (null));
+  const classes = useStyles();
+  const [map, setMap] = useState(/**@type google.maps.Map*/(null));
   const [directionsResponse, setDirectionsResponse] = useState(null);
   const [distance, setDistance] = useState("");
   const [duration, setDuration] = useState("");
@@ -226,7 +232,7 @@ function Map() {
       w="100vw"
     >
       <Box position="absolute" left={0} top={0} h="100%" w="100%">
-        {}
+        { }
         <GoogleMap
           center={center}
           zoom={10}
@@ -239,7 +245,19 @@ function Map() {
           }}
           onLoad={(map) => setMap(map)}
         >
-          <Marker position={center} />
+          {selectedRows.map((stop) => (
+            // <Marker
+            //   position={stop.location} 
+            // />
+
+            <InfoWindow position={stop.location}>
+              <div>
+                <h2 style={{ color: 'black' }}>{stop.Name}</h2>
+              </div>
+            </InfoWindow>
+
+
+          ))}
           {directionsResponse && (
             <DirectionsRenderer directions={directionsResponse} />
           )}
@@ -306,9 +324,11 @@ function Map() {
         <StopLocationTable
           stopLocations={stopLocation.data}
           onAddStops={handleAddStops}
+          stopAfterMinutes={stopAfterMinutes}
         />
+
       </Box>
-    </Flex>
+    </Flex >
   );
 }
 
