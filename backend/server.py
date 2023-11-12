@@ -83,10 +83,66 @@ def get_route_points_and_avg_speed(start, dest):
     print(avg_speed)
     return path_points, avg_speed
 
-@app.route('/stops', methods=['GET'])
+@app.route('/path', methods=['GET'])
 def get_stops():
     data, x= get_route_points_and_avg_speed(TRIP['start'], TRIP['dest'])
     return jsonify({'data': data})
+
+@app.route('/stops', methods=['GET'])
+def get_stops():
+    return jsonify(
+    {
+  "data": [
+    {
+      "id": 123,
+      "type": "restaurant",
+      "name": "Chipotle",
+      "parkCount": 3,
+      "addedTime": 7,
+      "location": [40.7128, -74.006]
+    },
+    {
+      "id": 124,
+      "type": "cafe",
+      "name": "Starbucks",
+      "parkCount": 2,
+      "addedTime": 5,
+      "location": [34.0522, -118.2437]
+    },
+    {
+      "id": 125,
+      "type": "bar",
+      "name": "The Pub",
+      "parkCount": 5,
+      "addedTime": 10,
+      "location": [51.5074, -0.1278]
+    },
+    {
+      "id": 126,
+      "type": "fast food",
+      "name": "McDonald's",
+      "parkCount": 1,
+      "addedTime": 3,
+      "location": [37.7749, -122.4194]
+    },
+    {
+      "id": 127,
+      "type": "pizza",
+      "name": "Pizza Hut",
+      "parkCount": 4,
+      "addedTime": 8,
+      "location": [45.4215, -75.6993]
+    },
+    {
+      "id": 128,
+      "type": "diner",
+      "name": "Denny's",
+      "parkCount": 2,
+      "addedTime": 6,
+      "location": [40.7128, -74.006]
+    }
+  ]
+})
 
 
 if __name__ == '__main__':
