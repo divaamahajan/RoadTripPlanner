@@ -48,8 +48,8 @@ def set_trip():
         # Create a route dictionary
         global TRIP
         TRIP = {
-            'start' : {'lat': start[0], 'long': start[1]},
-            'dest' : {'lat': dest[0], 'long': dest[1]},
+            'start' : start,
+            'dest' : dest,
             'stopAfter': stopAfter
         }
         
