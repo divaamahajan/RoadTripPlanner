@@ -57,7 +57,7 @@ const UserLocation = () => {
         setFormSubmitted(true);
 
         // Post the result object to the specified URL
-        const apiUrl = "http://54.237.215.115:5000/input";
+        const apiUrl = "/api/input";
         console.log("hello");
         await axios.post(apiUrl, resultObject);
         console.log("Result object posted successfully!");
