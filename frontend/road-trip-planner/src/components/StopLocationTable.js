@@ -86,6 +86,7 @@ const StopLocationTable = ({ stopLocations, onAddStops, stopAfterMinutes }) => {
                     selectedRows.push({
                       ...restro,
                       type: "restro",
+                      parkingNames: selectedRestros[stop.stop_id].parkingNames,
                     });
                   }
                   return (

@@ -269,11 +269,12 @@ function Map() {
         p={4}
         borderRadius="lg"
         mt={4}
-        bgColor="black"
+        bgColor="white" // Set background color to white
         shadow="base"
         minW="container.md"
         zIndex="11111111111"
-        textColor="red"
+        textColor="#867e7c"
+        border="2px solid grey"// Set text color to your preferred color
       >
         <HStack spacing={4}>
           <Autocomplete>
@@ -302,7 +303,7 @@ function Map() {
           />
 
           <ButtonGroup>
-            <Button colorScheme="pink" type="submit" onClick={calculateRoute}>
+            <Button colorScheme="orange" type="submit" onClick={calculateRoute} bgColor="#D94E28"> {/* Use #D94E28 for button color */}
               Calculate Route
             </Button>
             <IconButton
