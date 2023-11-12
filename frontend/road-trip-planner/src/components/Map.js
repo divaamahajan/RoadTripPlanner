@@ -26,7 +26,7 @@ import { useState, useRef } from "react";
 const center = { lat: 37.778828144073486, lng: -122.40001201629639 };
 
 function Map() {
-  const [map, setMap] = useState(/**@type google.maps.Map*/(null));
+  const [map, setMap] = useState(/**@type google.maps.Map*/ (null));
   const [directionsResponse, setDirectionsResponse] = useState(null);
   const [distance, setDistance] = useState("");
   const [duration, setDuration] = useState("");
@@ -41,7 +41,17 @@ function Map() {
 
   // Function to handle selected rows from StopLocationTable
   const handleAddStops = (rows) => {
-    setSelectedRows(rows);
+    // Modify location format for each row
+    const modifiedRows = rows.map((row) => {
+      const [lat, lng] = row.location;
+      return {
+        ...row,
+        location: { lat, lng },
+      };
+    });
+
+    console.log(modifiedRows);
+    setSelectedRows(modifiedRows);
     console.log(selectedRows);
   };
 
@@ -110,7 +120,10 @@ function Map() {
       // eslint-disable-next-line no-undef
       travelMode: google.maps.TravelMode.DRIVING,
     });
-    console.log("results-main", results.geocoded_waypoints.map((i) => i.place_id));
+    console.log(
+      "results-main",
+      results.geocoded_waypoints.map((i) => i.place_id)
+    );
 
     const geocoder = new google.maps.Geocoder();
     const placeId = results.geocoded_waypoints.map((i) => i.place_id);
@@ -118,36 +131,42 @@ function Map() {
 
     let start = [];
     function SgeocodePlaceId() {
-      geocoder.geocode({ placeId: String(placeId[0]) }).then(({ results }) => {
-        if (results[0]) {
-          const location = results[0].geometry.location;
-          console.log('SLatitude: ' + location.lat());
-          console.log('SLongitude: ' + location.lng());
-          setStartLocation([location.lat(), location.lng()])
-          console.log(setStartLocation);
-          start = [Number(location.lat()), Number(location.lng())];
-        } else {
-          console.log("No results found");
-        }
-      }).catch((e) => console.log("Geocoder failed due to: " + e));
+      geocoder
+        .geocode({ placeId: String(placeId[0]) })
+        .then(({ results }) => {
+          if (results[0]) {
+            const location = results[0].geometry.location;
+            console.log("SLatitude: " + location.lat());
+            console.log("SLongitude: " + location.lng());
+            setStartLocation([location.lat(), location.lng()]);
+            console.log(setStartLocation);
+            start = [Number(location.lat()), Number(location.lng())];
+          } else {
+            console.log("No results found");
+          }
+        })
+        .catch((e) => console.log("Geocoder failed due to: " + e));
     }
 
     let dest = [];
     function DgeocodePlaceId() {
-      geocoder.geocode({ placeId: String(placeId[1]) }).then(({ results }) => {
-        if (results[0]) {
-          const location = results[0].geometry.location;
-          console.log('DLatitude: ' + location.lat());
-          console.log('DLongitude: ' + location.lng());
-          setDestination([location.lat(), location.lng()])
-          dest = [Number(location.lat()), Number(location.lng())];
-          console.log("dest", dest)
-          console.log(setDestination);
-          return dest;
-        } else {
-          console.log("No results found");
-        }
-      }).catch((e) => console.log("Geocoder failed due to: " + e));
+      geocoder
+        .geocode({ placeId: String(placeId[1]) })
+        .then(({ results }) => {
+          if (results[0]) {
+            const location = results[0].geometry.location;
+            console.log("DLatitude: " + location.lat());
+            console.log("DLongitude: " + location.lng());
+            setDestination([location.lat(), location.lng()]);
+            dest = [Number(location.lat()), Number(location.lng())];
+            console.log("dest", dest);
+            console.log(setDestination);
+            return dest;
+          } else {
+            console.log("No results found");
+          }
+        })
+        .catch((e) => console.log("Geocoder failed due to: " + e));
     }
 
     start = SgeocodePlaceId();
@@ -159,9 +178,6 @@ function Map() {
     setDirectionsResponse(results);
     setDistance(results.routes[0].legs[0].distance.text);
     setDuration(results.routes[0].legs[0].duration.text);
-
-
-
 
     try {
       const resultObject = await calculateCoordinates();
@@ -210,7 +226,7 @@ function Map() {
       w="100vw"
     >
       <Box position="absolute" left={0} top={0} h="100%" w="100%">
-        { }
+        {}
         <GoogleMap
           center={center}
           zoom={10}
@@ -223,10 +239,6 @@ function Map() {
           }}
           onLoad={(map) => setMap(map)}
         >
-
-    
-
-
           <Marker position={center} />
           {directionsResponse && (
             <DirectionsRenderer directions={directionsResponse} />
@@ -291,7 +303,10 @@ function Map() {
             onClick={() => map.panTo(center)}
           />
         </HStack>
-        <StopLocationTable stopLocations={stopLocation.data} onAddStops={handleAddStops} />
+        <StopLocationTable
+          stopLocations={stopLocation.data}
+          onAddStops={handleAddStops}
+        />
       </Box>
     </Flex>
   );
