@@ -3,6 +3,8 @@ import requests
 import json, xmltodict
 from math import cos, asin, sqrt, pi
 
+from flask_cors import CORS
+
 def distance(lat1, lon1, lat2, lon2):
     r = 3958.756 # km
     p = pi / 180
@@ -11,6 +13,7 @@ def distance(lat1, lon1, lat2, lon2):
     return 2 * r * asin(sqrt(a))
 
 app = Flask(__name__)
+CORS(app)
 
 
 TRIP = {
