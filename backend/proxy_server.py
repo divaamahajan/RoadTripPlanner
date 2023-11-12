@@ -1,6 +1,10 @@
 from flask import Flask, jsonify, request
 import requests
 import json, xmltodict
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
@@ -14,8 +18,8 @@ hash_token = ""
 def get_token():
     # Set up URL to query
 
-    app_id = "eb8lmx7x2e"
-    hash_token = "ZWI4bG14N3gyZXx5Q0dmQTZ6UjNoNlJONTI0eTlnNE4zclRYcFAzMmYwcThRSkpNSUFI"
+    app_id = os.environ.get("INRIX_APP_ID")
+    hash_token = os.environ.get("INRIX_API_KEY")
     url = f"https://api.iq.inrix.com/auth/v1/appToken?appId={app_id}&hashToken={hash_token}"
     
     # Set up query method
@@ -109,7 +113,7 @@ def getNearby():
     querystring = {"latitude":f"{lat}","longitude":f"{long}","limit":f"{max_val}","currency":"USD","distance":"2","open_now":"false","lunit":"km","lang":"en_US"}
 
     headers = {
-        "X-RapidAPI-Key": "e14abafa05msh523b478b2eb875ep1d959ejsn4aa6f50f385d",
+        "X-RapidAPI-Key": os.environ.get("RAPID_API_KEY"),
         "X-RapidAPI-Host": "travel-advisor.p.rapidapi.com"
     }
 
