@@ -28,7 +28,7 @@ hash_token = ""
 inrix_token=""
 PROXY_SERVER = "http://127.0.0.1:8000/"
 
-@app.route('/set_trip', methods=['POST'])
+@app.route('/api/set_trip', methods=['POST'])
 def set_trip():
     try:
         data = request.get_json()
@@ -60,7 +60,7 @@ def set_trip():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@app.route('/test', methods=['GET'])
+@app.route('/api/test', methods=['GET'])
 def test():
     return jsonify({'data': 'HELLO '})
 
@@ -83,12 +83,12 @@ def get_route_points_and_avg_speed(start, dest):
     print(avg_speed)
     return path_points, avg_speed
 
-@app.route('/path', methods=['GET'])
+@app.route('/api/path', methods=['GET'])
 def get_path():
     data, x= get_route_points_and_avg_speed(TRIP['start'], TRIP['dest'])
     return jsonify({'data': data})
 
-@app.route('/stops', methods=['GET'])
+@app.route('/api/stops', methods=['GET'])
 def get_stops():
     return jsonify(
     {
@@ -143,6 +143,31 @@ def get_stops():
     }
   ]
 })
+
+@app.route('/api/stops', methods=['GET'])
+def get_stops_new():
+    path_array, avg_speed= get_route_points_and_avg_speed(TRIP['start'], TRIP['dest'])
+    stop_time = TRIP['stopAfter']
+    stop_dist = avg_speed * stop_time
+    
+    prev = path_array[0]
+    start = path_array[0]
+    stop_point_array = []
+    for point in path_array[1:]:
+        curr_dist = distance(point[0], point[1], start[0], start[1])
+        if curr_dist == stop_dist : 
+            stop_point_array.append(point)
+            start = point
+        elif curr_dist > stop_dist:
+            stop_point_array.append(prev)
+            start = prev
+        else :
+            prev = point
+    
+    return jsonify({'data': stop_point_array})
+            
+        
+    
 
 
 if __name__ == '__main__':
