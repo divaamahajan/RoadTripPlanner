@@ -34,7 +34,7 @@ function Map() {
 	const destinationRef = useRef()
 
 	const { isLoaded } = useJsApiLoader({
-		googleMapsApiKey: 'AIzaSyB7wBnq12Snk9vf_pdNB1EAm10Yls2FoKQ',
+
 		libraries: ['places'],
 	})
 	if (!isLoaded) {
