@@ -250,9 +250,10 @@ function Map() {
             //   position={stop.location} 
             // />
 
-            <InfoWindow position={stop.location}>
+            <InfoWindow position={stop.location} style={{ width: '10px' }}>
               <div>
                 <h2 style={{ color: 'black' }}>{stop.Name}</h2>
+                <p style={{ color: 'black' }}>{stop.address}</p>
               </div>
             </InfoWindow>
 
