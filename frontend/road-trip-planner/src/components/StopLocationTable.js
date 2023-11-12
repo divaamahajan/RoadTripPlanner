@@ -1,5 +1,5 @@
 // StopLocationTable.js
-import React from "react";
+import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUtensils,
@@ -13,7 +13,7 @@ import {
 
 const getIcon = (type) => {
   switch (type) {
-    case "restaurant":
+    case "restro":
       return faUtensils;
     case "cafe":
       return faCoffee;
@@ -32,61 +32,77 @@ const getIcon = (type) => {
   }
 };
 const StopLocationTable = ({ stopLocations }) => {
-  // Sort the stopLocations by added time
-  const sortedStopLocations = stopLocations.sort(
-    (a, b) => a.addedTime - b.addedTime
-  );
-
+  const [selectedRestro, setSelectedRestro] = useState(null);
   return (
     <div style={{ maxHeight: "300px", overflowY: "auto" }}>
       <h2>Stop Locations</h2>
-      <table
-        style={{
-          width: "100%",
-          borderCollapse: "collapse",
-          border: "1px solid #ddd",
-        }}
-      >
-        <thead>
-          <tr>
-            <th style={{ border: "1px solid #ddd", padding: "8px" }}>Type</th>
-            <th style={{ border: "1px solid #ddd", padding: "8px" }}>Name</th>
-            <th style={{ border: "1px solid #ddd", padding: "8px" }}>
-              Address
-            </th>
-            <th style={{ border: "1px solid #ddd", padding: "8px" }}>
-              Parking Spot count
-            </th>
-            <th style={{ border: "1px solid #ddd", padding: "8px" }}>
-              Added Time (minutes)
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {sortedStopLocations.map((location) => (
-            <tr key={location.id} style={{ borderBottom: "1px solid #ddd" }}>
-              <td style={{ borderRight: "1px solid #ddd", padding: "8px" }}>
-                {getIcon(location.type) && (
-                  <FontAwesomeIcon
-                    icon={getIcon(location.type)}
-                    style={{ marginRight: "5px" }}
-                  />
-                )}
-              </td>
-              <td style={{ borderRight: "1px solid #ddd", padding: "8px" }}>
-                {location.name}
-              </td>
-              <td style={{ borderRight: "1px solid #ddd", padding: "8px" }}>
-                {location.address}
-              </td>
-              <td style={{ borderRight: "1px solid #ddd", padding: "8px" }}>
-                {location.parkCount} slots
-              </td>
-              <td style={{ padding: "8px" }}>{location.addedTime}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      {stopLocations.map((stop) => (
+        <div key={stop.stop_id}>
+          <h3>Stop ID: {stop.stop_id}</h3>
+          <table
+            style={{
+              width: "100%",
+              borderCollapse: "collapse",
+              border: "1px solid #ddd",
+            }}
+          >
+            <thead>
+              <tr>
+                <th style={{ border: "1px solid #ddd", padding: "8px" }}>Type</th>
+                <th style={{ border: "1px solid #ddd", padding: "8px" }}>Name</th>
+                <th style={{ border: "1px solid #ddd", padding: "8px" }}>Address</th>
+              </tr>
+            </thead>
+            <tbody>
+              {/* Display parking information */}
+              {/* {stop.parking.map((park) => (
+                <tr key={park.id} style={{ borderBottom: "1px solid #ddd" }}>
+                  <td style={{ borderRight: "1px solid #ddd", padding: "8px" }}>
+                    <FontAwesomeIcon
+                      icon={faGasPump} // Assuming gas pump icon for parking, change as needed
+                      style={{ marginRight: "5px" }}
+                    />
+                  </td>
+                  <td style={{ borderRight: "1px solid #ddd", padding: "8px" }}>
+                    {park.name}
+                  </td>
+                  <td style={{ borderRight: "1px solid #ddd", padding: "8px" }}>
+                    {park.location.join(', ')}
+                  </td>
+                </tr>
+              ))} */}
+              {/* Display restaurant information with radio buttons */}
+              {stop.restro.map((restro) => (
+                <tr key={restro.id} style={{ borderBottom: "1px solid #ddd" }}>
+                  <td style={{ borderRight: "1px solid #ddd", padding: "8px" }}>
+                    {getIcon("restro") && (
+                      <FontAwesomeIcon
+                        icon={getIcon("restro")}
+                        style={{ marginRight: "5px" }}
+                      />
+                    )}
+                  </td>
+                  <td style={{ borderRight: "1px solid #ddd", padding: "8px" }}>
+                    {restro.Name}
+                  </td>
+                  <td style={{ borderRight: "1px solid #ddd", padding: "8px" }}>
+                    {restro.address}
+                  </td>
+                  <td style={{ padding: "8px" }}>
+                    {/* Radio button for selecting the restaurant */}
+                    <input
+                      type="radio"
+                      name={`restro_${stop.stop_id}`}
+                      value={restro.id}
+                      onChange={() => setSelectedRestro(restro.id)}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ))}
     </div>
   );
 };

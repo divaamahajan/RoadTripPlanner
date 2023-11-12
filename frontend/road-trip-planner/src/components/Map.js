@@ -35,6 +35,8 @@ function Map() {
   const [destination, setDestination] = useState("");
   const [stopsFetched, setStopsFetched] = useState(false);
   const [stopLocation, setStopLocation] = useState({ data: [] });
+  const [points, setPoints] = useState({});
+  const [marker, setMarker] = useState({});
 
   const [resultObject, setResultObject] = useState({});
   /** @type React.MutableRefObject<HTMLInputElement> */
@@ -163,6 +165,7 @@ function Map() {
         console.log("Result object posted successfully!", resp.data);
         console.log("Getting stops");
         const response = await axios.get("/api/stops");
+        setPoints(response.data);
         console.log("Stops received response.data", response.data);
         setStopLocation(response.data);
         setStopsFetched(true);
@@ -171,6 +174,8 @@ function Map() {
       handleAxiosError(error);
     }
   }
+
+  console.log("points", points);
 
   const handleAxiosError = (error) => {
     if (axios.isAxiosError(error)) {
@@ -211,6 +216,7 @@ function Map() {
           }}
           onLoad={(map) => setMap(map)}
         >
+          
           <Marker position={center} />
           {directionsResponse && (
             <DirectionsRenderer directions={directionsResponse} />
