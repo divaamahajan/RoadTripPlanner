@@ -4,6 +4,7 @@
       "id": 123,
       "type": "restaurant",
       "name": "Chipotle",
+      "address":"123 Main St, Cityville, USA",
       "parkCount": 3,
       "addedTime": 7,
       "location": [40.7128, -74.006]
@@ -12,6 +13,7 @@
       "id": 124,
       "type": "cafe",
       "name": "Starbucks",
+      "address":"456 Elm St, Townsville, USA",
       "parkCount": 2,
       "addedTime": 5,
       "location": [34.0522, -118.2437]
@@ -20,6 +22,7 @@
       "id": 125,
       "type": "bar",
       "name": "The Pub",
+      "address":"789 Oak St, Villageton, USA",
       "parkCount": 5,
       "addedTime": 10,
       "location": [51.5074, -0.1278]
@@ -28,6 +31,7 @@
       "id": 126,
       "type": "fast food",
       "name": "McDonald's",
+      "address":"101 Pine St, Hamletville, USA",
       "parkCount": 1,
       "addedTime": 3,
       "location": [37.7749, -122.4194]
@@ -36,6 +40,7 @@
       "id": 127,
       "type": "pizza",
       "name": "Pizza Hut",
+      "address":"202 Maple St, Countryside, USA",
       "parkCount": 4,
       "addedTime": 8,
       "location": [45.4215, -75.6993]
@@ -44,6 +49,7 @@
       "id": 128,
       "type": "diner",
       "name": "Denny's",
+      "address":"303 Cedar St, Riverside, USA",
       "parkCount": 2,
       "addedTime": 6,
       "location": [40.7128, -74.006]
