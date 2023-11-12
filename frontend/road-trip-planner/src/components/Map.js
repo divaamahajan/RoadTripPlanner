@@ -224,11 +224,7 @@ function Map() {
           onLoad={(map) => setMap(map)}
         >
 
-          {selectedRows.map((stop) => (
-            <Marker
-              position={stop.stop_location}
-            />
-          ))}
+    
 
 
           <Marker position={center} />
