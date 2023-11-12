@@ -34,8 +34,7 @@ function Map() {
 	const destinationRef = useRef()
 
 	const { isLoaded } = useJsApiLoader({
-
-		libraries: ['places'],
+		librawries: ['places'],
 	})
 	if (!isLoaded) {
 		return <SkeletonText />
