@@ -1,79 +1,89 @@
 // UserLocation.js
 "use client";
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import LocationForm from "./LocationForm";
-import ResultDisplay from "./ResultDisplay";
 import StopLocationTable from "./StopLocationTable";
-import { stopLocation } from "./stopLocation";
 
 const UserLocation = () => {
   const [startLocation, setStartLocation] = useState("");
   const [destination, setDestination] = useState("");
   const [stopAfterMinutes, setStopAfterMinutes] = useState("");
   const [resultObject, setResultObject] = useState({});
-  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [stopsFetched, setStopsFetched] = useState(false);
+  const [stopLocation, setStopLocation] = useState({ data: [] });
+
+  const geocodeLocation = async (location) => {
+    const response = await axios.get(
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
+        location
+      )}&format=json`
+    );
+
+    return response.data && response.data.length > 0 ? response.data[0] : null;
+  };
+
+  const calculateCoordinates = async () => {
+    let startLat, startLon, destLat, destLon;
+
+    const startResponse = await geocodeLocation(startLocation);
+    const destResponse = await geocodeLocation(destination);
+
+    if (startResponse) {
+      ({ lat: startLat, lon: startLon } = startResponse);
+      console.log("Start Location Coordinates:", [startLat, startLon]);
+    }
+
+    if (destResponse) {
+      ({ lat: destLat, lon: destLon } = destResponse);
+      console.log("Destination Coordinates:", [destLat, destLon]);
+
+      const resultObject = {
+        // data: {
+          // start: [startLat, startLon],
+          // dest: [destLat, destLon],
+          start: [parseFloat(startLat), parseFloat(startLon)],
+          dest: [parseFloat(destLat), parseFloat(destLon)],
+          stopAfter: stopAfterMinutes
+        // },
+      };
+
+      console.log("Result Object:", resultObject);
+      setResultObject(resultObject);
+
+      return resultObject;
+    }
+
+    return null;
+  };
 
   const handleSubmit = async () => {
-    let startLat, startLon, destLat, destLon; // Declare variables here
-
     try {
-      // Geocode start location
-      const startResponse = await axios.get(
-        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
-          startLocation
-        )}&format=json`
-      );
+      const resultObject = await calculateCoordinates();
+      console.log("resultObject", resultObject);
 
-      if (startResponse.data && startResponse.data.length > 0) {
-        // Assign values to variables
-        ({ lat: startLat, lon: startLon } = startResponse.data[0]);
-        console.log("Start Location Coordinates:", [startLat, startLon]);
-      }
-
-      // Geocode destination
-      const destinationResponse = await axios.get(
-        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
-          destination
-        )}&format=json`
-      );
-
-      if (destinationResponse.data && destinationResponse.data.length > 0) {
-        // Assign values to variables
-        ({ lat: destLat, lon: destLon } = destinationResponse.data[0]);
-        console.log("Destination Coordinates:", [destLat, destLon]);
-
-        // Set the object with the data structure
-        const resultObject = {
-          data: {
-            start: [parseFloat(startLat), parseFloat(startLon)],
-            dest: [parseFloat(destLat), parseFloat(destLon)],
-            stopAfter: stopAfterMinutes,
-          },
-        };
-
-        console.log("Result Object:", resultObject);
-        setFormSubmitted(true);
-
-        // Post the result object to the specified URL
-        const apiUrl = "/api/input";
-        console.log("hello");
+      if (resultObject) {
+        const apiUrl = "/api/set_trip";
+        console.log("Posting result object to", apiUrl);
         await axios.post(apiUrl, resultObject);
         console.log("Result object posted successfully!");
-        // Update result object state
-        setResultObject(resultObject);
-      }
 
-      // Additional logic for calculating coordinates based on user inputs
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        // Axios error (network, timeout, etc.)
-        console.error("Axios Error:", error.message);
-      } else {
-        // Other types of errors
-        console.error("Error geocoding:", error);
+        console.log("Getting stops");
+        const response = await axios.get("/api/stops");
+        console.log("Stops received response.data", response.data);
+        setStopLocation(response.data);
+        setStopsFetched(true);
       }
+    } catch (error) {
+      handleAxiosError(error);
+    }
+  };
+
+  const handleAxiosError = (error) => {
+    if (axios.isAxiosError(error)) {
+      console.error("Axios Error:", error.message);
+    } else {
+      console.error("Error:", error);
     }
   };
 
@@ -102,9 +112,8 @@ const UserLocation = () => {
           setStopAfterMinutes={setStopAfterMinutes}
           handleSubmit={handleSubmit}
         />
-        {/* <ResultDisplay resultObject={resultObject} /> */}
       </div>
-      {formSubmitted && (
+      {stopsFetched && (
         <div
           style={{
             textAlign: "center",
