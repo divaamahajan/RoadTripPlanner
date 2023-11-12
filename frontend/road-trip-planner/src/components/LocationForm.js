@@ -11,10 +11,10 @@ const LocationForm = ({
   handleSubmit,
 }) => {
   return (
-    <div>
+    <div style={{ marginBottom: "20px", textAlign: "center" }}>
       <div style={{ marginBottom: "20px" }}>
         <label
-          style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}
+          style={{ display: "block", marginBottom: "10px", fontWeight: "bold" }}
         >
           Start Location:
           <input
@@ -23,16 +23,17 @@ const LocationForm = ({
             onChange={(e) => setStartLocation(e.target.value)}
             style={{
               marginLeft: "10px",
-              padding: "8px",
+              padding: "10px",
               borderRadius: "5px",
-              border: "1px solid #ccc",
+              border: "1px solid #ddd",
+              width: "300px",
             }}
           />
         </label>
       </div>
       <div style={{ marginBottom: "20px" }}>
         <label
-          style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}
+          style={{ display: "block", marginBottom: "10px", fontWeight: "bold" }}
         >
           Destination:
           <input
@@ -41,16 +42,17 @@ const LocationForm = ({
             onChange={(e) => setDestination(e.target.value)}
             style={{
               marginLeft: "10px",
-              padding: "8px",
+              padding: "10px",
               borderRadius: "5px",
-              border: "1px solid #ccc",
+              border: "1px solid #ddd",
+              width: "300px",
             }}
           />
         </label>
       </div>
       <div style={{ marginBottom: "20px" }}>
         <label
-          style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}
+          style={{ display: "block", marginBottom: "10px", fontWeight: "bold" }}
         >
           Stop After Minutes:
           <input
@@ -59,9 +61,10 @@ const LocationForm = ({
             onChange={(e) => setStopAfterMinutes(e.target.value)}
             style={{
               marginLeft: "10px",
-              padding: "8px",
+              padding: "10px",
               borderRadius: "5px",
-              border: "1px solid #ccc",
+              border: "1px solid #ddd",
+              width: "300px",
             }}
           />
         </label>
@@ -71,11 +74,11 @@ const LocationForm = ({
         style={{
           backgroundColor: "#4CAF50",
           color: "white",
-          padding: "10px 20px",
+          padding: "15px 30px",
           border: "none",
           borderRadius: "5px",
           cursor: "pointer",
-          fontSize: "16px",
+          fontSize: "18px",
         }}
       >
         Submit

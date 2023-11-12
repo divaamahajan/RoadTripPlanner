@@ -57,7 +57,7 @@ const UserLocation = () => {
         setFormSubmitted(true);
 
         // Post the result object to the specified URL
-        const apiUrl = "http://54.237.215.115:5000/input";
+        const apiUrl = "/api/input";
         console.log("hello");
         await axios.post(apiUrl, resultObject);
         console.log("Result object posted successfully!");
@@ -78,32 +78,47 @@ const UserLocation = () => {
   };
 
   return (
-    <div
-      style={{
-        textAlign: "center",
-        padding: "20px",
-        maxWidth: "400px",
-        margin: "auto",
-        border: "1px solid #ddd",
-        borderRadius: "10px",
-        boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
-      }}
-    >
-      <h1 style={{ color: "#333", fontSize: "24px", marginBottom: "20px" }}>
-        Choose User Locations
-      </h1>
-      <LocationForm
-        startLocation={startLocation}
-        setStartLocation={setStartLocation}
-        destination={destination}
-        setDestination={setDestination}
-        stopAfterMinutes={stopAfterMinutes}
-        setStopAfterMinutes={setStopAfterMinutes}
-        handleSubmit={handleSubmit}
-      />
-      {/* <ResultDisplay resultObject={resultObject} /> */}
-      {formSubmitted && <StopLocationTable stopLocations={stopLocation.data} />}
-      
+    <div>
+      <div
+        style={{
+          textAlign: "center",
+          padding: "20px",
+          maxWidth: "400px",
+          margin: "20px auto",
+          border: "1px solid #ddd",
+          borderRadius: "10px",
+          boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        <h1 style={{ color: "#333", fontSize: "24px", marginBottom: "20px" }}>
+          Choose User Locations
+        </h1>
+        <LocationForm
+          startLocation={startLocation}
+          setStartLocation={setStartLocation}
+          destination={destination}
+          setDestination={setDestination}
+          stopAfterMinutes={stopAfterMinutes}
+          setStopAfterMinutes={setStopAfterMinutes}
+          handleSubmit={handleSubmit}
+        />
+        {/* <ResultDisplay resultObject={resultObject} /> */}
+      </div>
+      {formSubmitted && (
+        <div
+          style={{
+            textAlign: "center",
+            padding: "20px",
+            maxWidth: "800px",
+            margin: "20px auto",
+            border: "1px solid #ddd",
+            borderRadius: "10px",
+            boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          <StopLocationTable stopLocations={stopLocation.data} />
+        </div>
+      )}
     </div>
   );
 };
