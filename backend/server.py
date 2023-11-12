@@ -144,7 +144,7 @@ def get_stops():
   ]
 })
 
-@app.route('/api/stops', methods=['GET'])
+@app.route('/api/stop_points', methods=['GET'])
 def get_stops_new():
     path_array, avg_speed= get_route_points_and_avg_speed(TRIP['start'], TRIP['dest'])
     stop_time = TRIP['stopAfter']
